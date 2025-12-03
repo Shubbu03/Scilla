@@ -3,6 +3,7 @@ use {
         commands::CommandExec, constants::LAMPORTS_PER_SOL, context::ScillaContext,
         error::ScillaResult, ui::show_spinner,
     },
+    comfy_table::{Cell, Table, presets::UTF8_FULL},
     console::style,
     std::ops::Div,
 };
@@ -76,55 +77,40 @@ impl ClusterCommand {
 async fn fetch_epoch_info(ctx: &ScillaContext) -> anyhow::Result<()> {
     let epoch_info = ctx.rpc().get_epoch_info().await?;
 
-    println!(
-        "\n{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!("{}", style("           EPOCH INFORMATION").green().bold());
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!(
-        "  {} {}",
-        style("Epoch:").yellow().bold(),
-        style(format!("{}", epoch_info.epoch)).cyan()
-    );
-    println!(
-        "  {} {}",
-        style("Slot Index:").yellow().bold(),
-        style(format!("{}", epoch_info.slot_index)).cyan()
-    );
-    println!(
-        "  {} {}",
-        style("Slots in Epoch:").yellow().bold(),
-        style(format!("{}", epoch_info.slots_in_epoch)).cyan()
-    );
-    println!(
-        "  {} {}",
-        style("Absolute Slot:").yellow().bold(),
-        style(format!("{}", epoch_info.absolute_slot)).cyan()
-    );
-    println!(
-        "  {} {}",
-        style("Block Height:").yellow().bold(),
-        style(format!("{}", epoch_info.block_height)).cyan()
-    );
-    println!(
-        "  {} {}",
-        style("Transaction Count:").yellow().bold(),
-        style(format!("{}", epoch_info.transaction_count.unwrap_or(0))).cyan()
-    );
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
+    let mut table = Table::new();
+    table
+        .load_preset(UTF8_FULL)
+        .set_header(vec![
+            Cell::new("Field").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new("Value").add_attribute(comfy_table::Attribute::Bold),
+        ])
+        .add_row(vec![
+            Cell::new("Epoch"),
+            Cell::new(format!("{}", epoch_info.epoch)),
+        ])
+        .add_row(vec![
+            Cell::new("Slot Index"),
+            Cell::new(format!("{}", epoch_info.slot_index)),
+        ])
+        .add_row(vec![
+            Cell::new("Slots in Epoch"),
+            Cell::new(format!("{}", epoch_info.slots_in_epoch)),
+        ])
+        .add_row(vec![
+            Cell::new("Absolute Slot"),
+            Cell::new(format!("{}", epoch_info.absolute_slot)),
+        ])
+        .add_row(vec![
+            Cell::new("Block Height"),
+            Cell::new(format!("{}", epoch_info.block_height)),
+        ])
+        .add_row(vec![
+            Cell::new("Transaction Count"),
+            Cell::new(format!("{}", epoch_info.transaction_count.unwrap_or(0))),
+        ]);
+
+    println!("\n{}", style("EPOCH INFORMATION").green().bold());
+    println!("{}", table);
 
     Ok(())
 }
@@ -132,30 +118,20 @@ async fn fetch_epoch_info(ctx: &ScillaContext) -> anyhow::Result<()> {
 async fn fetch_current_slot(ctx: &ScillaContext) -> anyhow::Result<()> {
     let slot = ctx.rpc().get_slot().await?;
 
-    println!(
-        "\n{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!("{}", style("           CURRENT SLOT").green().bold());
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!(
-        "  {} {}",
-        style("Slot:").yellow().bold(),
-        style(format!("{}", slot)).cyan().bold()
-    );
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
+    let mut table = Table::new();
+    table
+        .load_preset(UTF8_FULL)
+        .set_header(vec![
+            Cell::new("Field").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new("Value").add_attribute(comfy_table::Attribute::Bold),
+        ])
+        .add_row(vec![
+            Cell::new("Current Slot"),
+            Cell::new(format!("{}", slot)),
+        ]);
+
+    println!("\n{}", style("CURRENT SLOT").green().bold());
+    println!("{}", table);
 
     Ok(())
 }
@@ -163,30 +139,20 @@ async fn fetch_current_slot(ctx: &ScillaContext) -> anyhow::Result<()> {
 async fn fetch_block_height(ctx: &ScillaContext) -> anyhow::Result<()> {
     let block_height = ctx.rpc().get_block_height().await?;
 
-    println!(
-        "\n{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!("{}", style("           BLOCK HEIGHT").green().bold());
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!(
-        "  {} {}",
-        style("Block Height:").yellow().bold(),
-        style(format!("{}", block_height)).cyan().bold()
-    );
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
+    let mut table = Table::new();
+    table
+        .load_preset(UTF8_FULL)
+        .set_header(vec![
+            Cell::new("Field").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new("Value").add_attribute(comfy_table::Attribute::Bold),
+        ])
+        .add_row(vec![
+            Cell::new("Block Height"),
+            Cell::new(format!("{}", block_height)),
+        ]);
+
+    println!("\n{}", style("BLOCK HEIGHT").green().bold());
+    println!("{}", table);
 
     Ok(())
 }
@@ -199,40 +165,22 @@ async fn fetch_block_time(ctx: &ScillaContext) -> anyhow::Result<()> {
         .map(|dt| dt.format("%Y-%m-%d %H:%M:%S UTC").to_string())
         .unwrap_or_else(|| "Invalid timestamp".to_string());
 
-    println!(
-        "\n{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!("{}", style("           BLOCK TIME").green().bold());
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!(
-        "  {} {}",
-        style("Slot:").yellow().bold(),
-        style(format!("{}", slot)).cyan()
-    );
-    println!(
-        "  {} {}",
-        style("Unix Timestamp:").yellow().bold(),
-        style(format!("{}", block_time)).cyan()
-    );
-    println!(
-        "  {} {}",
-        style("Date/Time:").yellow().bold(),
-        style(datetime).cyan().bold()
-    );
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
+    let mut table = Table::new();
+    table
+        .load_preset(UTF8_FULL)
+        .set_header(vec![
+            Cell::new("Field").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new("Value").add_attribute(comfy_table::Attribute::Bold),
+        ])
+        .add_row(vec![Cell::new("Slot"), Cell::new(format!("{}", slot))])
+        .add_row(vec![
+            Cell::new("Unix Timestamp"),
+            Cell::new(format!("{}", block_time)),
+        ])
+        .add_row(vec![Cell::new("Date/Time"), Cell::new(datetime)]);
+
+    println!("\n{}", style("BLOCK TIME").green().bold());
+    println!("{}", table);
 
     Ok(())
 }
@@ -240,68 +188,55 @@ async fn fetch_block_time(ctx: &ScillaContext) -> anyhow::Result<()> {
 async fn fetch_validators(ctx: &ScillaContext) -> anyhow::Result<()> {
     let validators = ctx.rpc().get_vote_accounts().await?;
 
-    println!(
-        "\n{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!("{}", style("           VALIDATORS").green().bold());
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!(
-        "  {} {}",
-        style("Current Validators:").yellow().bold(),
-        style(format!("{}", validators.current.len())).cyan().bold()
-    );
-    println!(
-        "  {} {}",
-        style("Delinquent Validators:").yellow().bold(),
-        style(format!("{}", validators.delinquent.len()))
-            .cyan()
-            .bold()
-    );
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
+    // Summary table
+    let mut summary_table = Table::new();
+    summary_table
+        .load_preset(UTF8_FULL)
+        .set_header(vec![
+            Cell::new("Field").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new("Value").add_attribute(comfy_table::Attribute::Bold),
+        ])
+        .add_row(vec![
+            Cell::new("Current Validators"),
+            Cell::new(format!("{}", validators.current.len())),
+        ])
+        .add_row(vec![
+            Cell::new("Delinquent Validators"),
+            Cell::new(format!("{}", validators.delinquent.len())),
+        ]);
 
+    println!("\n{}", style("VALIDATORS SUMMARY").green().bold());
+    println!("{}", summary_table);
+
+    // Validators detail table
     if !validators.current.is_empty() {
-        println!("\n{}", style("Top Current Validators:").yellow().bold());
-        println!("{}", style("───────────────────────────────────────").dim());
-        for (idx, validator) in validators.current.iter().take(10).enumerate() {
+        let mut validators_table = Table::new();
+        validators_table.load_preset(UTF8_FULL).set_header(vec![
+            Cell::new("#").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new("Node Pubkey").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new("Vote Account").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new("Activated Stake (SOL)").add_attribute(comfy_table::Attribute::Bold),
+        ]);
+
+        for (idx, validator) in validators.current.iter().take(20).enumerate() {
             let stake_sol = (validator.activated_stake as f64).div(LAMPORTS_PER_SOL as f64);
-            println!(
-                "  {}. {}",
-                style(format!("{}", idx + 1)).dim(),
-                style(validator.node_pubkey.clone()).cyan()
-            );
-            println!(
-                "     {} {} SOL",
-                style("Stake:").dim(),
-                style(format!("{:.2}", stake_sol)).cyan()
-            );
-            println!(
-                "     {} {}",
-                style("Vote Account:").dim(),
-                style(validator.vote_pubkey.clone()).dim()
-            );
-            if idx < 9 && idx < validators.current.len() - 1 {
-                println!();
-            }
+            validators_table.add_row(vec![
+                Cell::new(format!("{}", idx + 1)),
+                Cell::new(validator.node_pubkey.clone()),
+                Cell::new(validator.vote_pubkey.clone()),
+                Cell::new(format!("{:.2}", stake_sol)),
+            ]);
         }
-        if validators.current.len() > 10 {
+
+        println!("\n{}", style("TOP VALIDATORS").green().bold());
+        println!("{}", validators_table);
+
+        if validators.current.len() > 20 {
             println!(
-                "\n  {}",
+                "\n{}",
                 style(format!(
                     "... and {} more validators",
-                    validators.current.len() - 10
+                    validators.current.len() - 20
                 ))
                 .dim()
             );
@@ -317,46 +252,34 @@ async fn fetch_supply_info(ctx: &ScillaContext) -> anyhow::Result<()> {
     let total_sol = (supply.value.total as f64).div(LAMPORTS_PER_SOL as f64);
     let circulating_sol = (supply.value.circulating as f64).div(LAMPORTS_PER_SOL as f64);
     let non_circulating_sol = (supply.value.non_circulating as f64).div(LAMPORTS_PER_SOL as f64);
+    let circulating_pct = (circulating_sol / total_sol) * 100.0;
 
-    println!(
-        "\n{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!("{}", style("           SUPPLY INFORMATION").green().bold());
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!(
-        "  {} {} SOL",
-        style("Total Supply:").yellow().bold(),
-        style(format!("{:.2}", total_sol)).cyan().bold()
-    );
-    println!(
-        "  {} {} SOL",
-        style("Circulating:").yellow().bold(),
-        style(format!("{:.2}", circulating_sol)).cyan()
-    );
-    println!(
-        "  {} {} SOL",
-        style("Non-Circulating:").yellow().bold(),
-        style(format!("{:.2}", non_circulating_sol)).cyan()
-    );
-    println!(
-        "  {} {}",
-        style("Circulating Percentage:").yellow().bold(),
-        style(format!("{:.2}%", (circulating_sol / total_sol) * 100.0)).cyan()
-    );
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
+    let mut table = Table::new();
+    table
+        .load_preset(UTF8_FULL)
+        .set_header(vec![
+            Cell::new("Field").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new("Value (SOL)").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new("Percentage").add_attribute(comfy_table::Attribute::Bold),
+        ])
+        .add_row(vec![
+            Cell::new("Total Supply"),
+            Cell::new(format!("{:.2}", total_sol)),
+            Cell::new("100.00%"),
+        ])
+        .add_row(vec![
+            Cell::new("Circulating"),
+            Cell::new(format!("{:.2}", circulating_sol)),
+            Cell::new(format!("{:.2}%", circulating_pct)),
+        ])
+        .add_row(vec![
+            Cell::new("Non-Circulating"),
+            Cell::new(format!("{:.2}", non_circulating_sol)),
+            Cell::new(format!("{:.2}%", 100.0 - circulating_pct)),
+        ]);
+
+    println!("\n{}", style("SUPPLY INFORMATION").green().bold());
+    println!("{}", table);
 
     Ok(())
 }
@@ -364,50 +287,32 @@ async fn fetch_supply_info(ctx: &ScillaContext) -> anyhow::Result<()> {
 async fn fetch_inflation_info(ctx: &ScillaContext) -> anyhow::Result<()> {
     let inflation = ctx.rpc().get_inflation_rate().await?;
 
-    println!(
-        "\n{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!(
-        "{}",
-        style("           INFLATION INFORMATION").green().bold()
-    );
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!(
-        "  {} {}",
-        style("Epoch:").yellow().bold(),
-        style(format!("{}", inflation.epoch)).cyan()
-    );
-    println!(
-        "  {} {}",
-        style("Total Inflation Rate:").yellow().bold(),
-        style(format!("{:.4}%", inflation.total * 100.0))
-            .cyan()
-            .bold()
-    );
-    println!(
-        "  {} {}",
-        style("Validator Inflation:").yellow().bold(),
-        style(format!("{:.4}%", inflation.validator * 100.0)).cyan()
-    );
-    println!(
-        "  {} {}",
-        style("Foundation Inflation:").yellow().bold(),
-        style(format!("{:.4}%", inflation.foundation * 100.0)).cyan()
-    );
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
+    let mut table = Table::new();
+    table
+        .load_preset(UTF8_FULL)
+        .set_header(vec![
+            Cell::new("Field").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new("Value").add_attribute(comfy_table::Attribute::Bold),
+        ])
+        .add_row(vec![
+            Cell::new("Epoch"),
+            Cell::new(format!("{}", inflation.epoch)),
+        ])
+        .add_row(vec![
+            Cell::new("Total Inflation Rate"),
+            Cell::new(format!("{:.4}%", inflation.total * 100.0)),
+        ])
+        .add_row(vec![
+            Cell::new("Validator Inflation"),
+            Cell::new(format!("{:.4}%", inflation.validator * 100.0)),
+        ])
+        .add_row(vec![
+            Cell::new("Foundation Inflation"),
+            Cell::new(format!("{:.4}%", inflation.foundation * 100.0)),
+        ]);
+
+    println!("\n{}", style("INFLATION INFORMATION").green().bold());
+    println!("{}", table);
 
     Ok(())
 }
@@ -415,37 +320,27 @@ async fn fetch_inflation_info(ctx: &ScillaContext) -> anyhow::Result<()> {
 async fn fetch_cluster_version(ctx: &ScillaContext) -> anyhow::Result<()> {
     let version = ctx.rpc().get_version().await?;
 
-    println!(
-        "\n{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!("{}", style("           CLUSTER VERSION").green().bold());
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
-    println!(
-        "  {} {}",
-        style("Solana Core:").yellow().bold(),
-        style(version.solana_core.clone()).cyan().bold()
-    );
+    let mut table = Table::new();
+    table
+        .load_preset(UTF8_FULL)
+        .set_header(vec![
+            Cell::new("Field").add_attribute(comfy_table::Attribute::Bold),
+            Cell::new("Value").add_attribute(comfy_table::Attribute::Bold),
+        ])
+        .add_row(vec![
+            Cell::new("Solana Core"),
+            Cell::new(version.solana_core.clone()),
+        ]);
+
     if let Some(feature_set) = version.feature_set {
-        println!(
-            "  {} {}",
-            style("Feature Set:").yellow().bold(),
-            style(format!("{}", feature_set)).cyan()
-        );
+        table.add_row(vec![
+            Cell::new("Feature Set"),
+            Cell::new(format!("{}", feature_set)),
+        ]);
     }
-    println!(
-        "{}",
-        style("═══════════════════════════════════════")
-            .cyan()
-            .bold()
-    );
+
+    println!("\n{}", style("CLUSTER VERSION").green().bold());
+    println!("{}", table);
 
     Ok(())
 }
