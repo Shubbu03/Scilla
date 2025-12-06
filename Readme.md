@@ -50,7 +50,7 @@ Navigate using arrow keys, press Enter to select.
 > Choose a command group: ScillaConfig
 ? ScillaConfig Command:
   Show ScillaConfig
-> Set ScillaConfig
+> Generate ScillaConfig
   Edit ScillaConfig
 
 ```
@@ -76,7 +76,7 @@ Manage wallets and on-chain accounts.
 
 | Command                 | What it does                         | Status |
 | ----------------------- | ------------------------------------ | ------ |
-| **Fetch Account**       | Get full account info for any pubkey | Done   |
+| **Fetch Account**       | Get AccountInfo                      | Done   |
 | **Balance**             | Check SOL balance                    | Done   |
 | **Transfer**            | Send SOL to another wallet           | Todo   |
 | **Airdrop**             | Request devnet/testnet SOL           | Done   |
@@ -149,6 +149,6 @@ For validators managing vote accounts.
 Manage Scilla's configuration settings.
 | Command          | What it does                      | Status |
 | ---------------- | --------------------------------- | ------ |
-| **Set ScillaConfig** | Create or overwrite config file   | Done   |
+| **Generate ScillaConfig** | Create or overwrite config file   | Done   |
 | **Edit ScillaConfig**| Open config file in default editor | Done   |
-| **View ScillaConfig**| Display current config settings    | Done   |
+| **Show ScillaConfig**| Display current config settings    | Done   |

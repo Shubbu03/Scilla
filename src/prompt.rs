@@ -155,7 +155,7 @@ fn prompt_config() -> anyhow::Result<ConfigCommand> {
         "ScillaConfig Command:",
         vec![
             "Show ScillaConfig",
-            "Set ScillaConfig",
+            "Generate ScillaConfig",
             "Edit ScillaConfig",
             "Go Back",
         ],
